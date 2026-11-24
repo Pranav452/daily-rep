@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Daily Dashboard
 
-## Getting Started
+Today's operations counts and the accounts funds-position sheet, read live from the ERP databases.
 
-First, run the development server:
+## Run
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+npm install
+npm run dev -- -p 3210
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`.env.local` needs the `MSSQL_MANILAL_*` and `MSSQL_LINKS_*` values (host, port, user, password, database). The app only reads the ERP.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Sign-in
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Every page needs a sign-in. Add people from a terminal in this folder; the password is typed at the prompt and only a salted hash is stored in `data/users.json`.
 
-## Learn More
+```
+npm run add-user -- <username> <finance|ops> "Full name"
+npm run add-user -- --list
+npm run add-user -- --remove <username>
+```
 
-To learn more about Next.js, take a look at the following resources:
+- `finance` sees Operations and Funds position.
+- `ops` sees Operations only.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Running `add-user` again for the same username changes the password or role. The first run also writes `AUTH_SECRET` to `.env.local`; restart the app after that. Set `AUTH_COOKIE_SECURE=1` once the app is served over https.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Data kept by the app
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`data/` (not in git): `users.json`, and one `funds/<day>.json` per day holding the figures typed into the funds sheet.

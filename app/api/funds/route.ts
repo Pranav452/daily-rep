@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server"
+import { currentUser } from "@/lib/auth"
 import { isIsoDate, todayIST } from "@/lib/dates"
 import { saveSheet } from "@/lib/funds-store"
 import type { FundsManual } from "@/lib/funds-sheet"
 
 export async function PUT(req: Request) {
+  const me = await currentUser()
+  if (!me) return NextResponse.json({ error: "Sign in again." }, { status: 401 })
+  if (me.role !== "finance") return NextResponse.json({ error: "Not allowed." }, { status: 403 })
   const text = await req.text()
   if (text.length > 400_000) return NextResponse.json({ error: "Sheet is too large to save." }, { status: 413 })
   let body: { day?: unknown; manual?: FundsManual }

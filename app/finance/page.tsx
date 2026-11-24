@@ -1,15 +1,17 @@
 import { Suspense } from "react"
 import { TopBar } from "@/components/top-bar"
+import { requireUser } from "@/lib/auth"
 import { FundsSheet } from "@/components/funds-sheet"
 import { fortnightsBefore, longDate, pickDay } from "@/lib/dates"
 import { loadFundsErp } from "@/lib/funds"
 import { loadSheet } from "@/lib/funds-store"
 
 export default async function FinancePage({ searchParams }: PageProps<"/finance">) {
+  const me = await requireUser("finance")
   const day = pickDay((await searchParams).d)
   return (
     <>
-      <TopBar active="finance" day={day} />
+      <TopBar active="finance" day={day} me={me} />
       <main className="mx-auto w-full max-w-[1500px] flex-1 px-4 py-5 print:p-0">
         <Suspense key={day} fallback={<SheetSkeleton />}>
           <Sheet day={day} />

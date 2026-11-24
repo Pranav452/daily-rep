@@ -1,5 +1,6 @@
 import { Suspense } from "react"
 import { TopBar } from "@/components/top-bar"
+import { requireUser } from "@/lib/auth"
 import { friendlyDbError, type Company } from "@/lib/db"
 import { count, lakhs, longDate, pickDay, todayIST } from "@/lib/dates"
 import {
@@ -15,6 +16,7 @@ const typeLabel = (l: Line) =>
 const sum = <T,>(rows: T[], f: (r: T) => number) => rows.reduce((a, r) => a + f(r), 0)
 
 export default async function OpsPage({ searchParams }: PageProps<"/">) {
+  const me = await requireUser()
   const sp = await searchParams
   const co: Company = sp.co === "links" ? "links" : "manilal"
   const day = pickDay(sp.d)
@@ -25,7 +27,7 @@ export default async function OpsPage({ searchParams }: PageProps<"/">) {
 
   return (
     <>
-      <TopBar active="ops" day={day} co={co} br={br} />
+      <TopBar active="ops" day={day} co={co} br={br} me={me} />
       <main className="mx-auto w-full max-w-[1500px] flex-1 px-4 py-5">
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           <Suspense key={`ship:${k}`} fallback={<Skeleton title="Shipments opened" />}>
