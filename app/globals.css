@@ -1,26 +1,213 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --bg: #f4f5f3;
+  --panel: #ffffff;
+  --ink: #16201b;
+  --muted: #66716b;
+  --line: #d9ddd8;
+  --line-strong: #2b332f;
+  --accent: #0f6b4f;
+  --accent-soft: #e3f1ec;
+  --warn: #a4541a;
+  --bad: #b3261e;
+  --manual: #fff8dc;
+  --manual-line: #e2c45c;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --bg: #111513;
+    --panel: #191e1b;
+    --ink: #e8ece9;
+    --muted: #94a09a;
+    --line: #2c3430;
+    --line-strong: #7d8a83;
+    --accent: #4fc39c;
+    --accent-soft: #17332a;
+    --warn: #e0a063;
+    --bad: #f08a80;
+    --manual: #332d12;
+    --manual-line: #7a6a26;
   }
 }
 
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-warn: var(--warn);
+  --color-bad: var(--bad);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ── Operations cards ─────────────────────────────────────────────────── */
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.mini th {
+  font-weight: 500;
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 6px 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+.mini td {
+  padding: 5px 8px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--line);
+}
+.mini tr:last-child td {
+  border-bottom: 0;
+}
+.mini th.num {
+  text-align: right;
+}
+.skel {
+  background: linear-gradient(90deg, var(--line) 25%, transparent 50%, var(--line) 75%);
+  background-size: 200% 100%;
+  animation: skel 1.4s linear infinite;
+  border-radius: 6px;
+  opacity: 0.55;
+}
+@keyframes skel {
+  to {
+    background-position: -200% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skel {
+    animation: none;
+  }
+}
+
+/* ── Funds sheet: ruled like the printed one ──────────────────────────── */
+.sheet {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 12.5px;
+  background: var(--panel);
+}
+.sheet td,
+.sheet th {
+  border: 1px solid var(--line-strong);
+  padding: 2px 6px;
+  height: 24px;
+  vertical-align: middle;
+}
+.sheet th {
+  text-align: left;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11.5px;
+}
+.sheet .lbl {
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 260px;
+}
+.sheet .total td {
+  font-weight: 700;
+}
+.sheet td.cell-in {
+  padding: 0;
+  background: var(--manual);
+}
+.sheet td.cell-erp {
+  padding: 0;
+}
+.sheet input {
+  width: 100%;
+  height: 23px;
+  padding: 0 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  border: 0;
+  outline: 0;
+}
+.sheet input:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+.sheet input.num {
+  text-align: right;
+}
+.sheet input.edited {
+  background: var(--manual);
+}
+.sheet .rowbtn {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  line-height: 1;
+}
+.sheet .rowbtn:hover {
+  color: var(--bad);
+  background: var(--bg);
+}
+.sheet td.tool {
+  border: 0;
+  padding: 0 0 0 2px;
+  width: 24px;
+  background: var(--bg);
+}
+
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 8mm;
+  }
+  :root {
+    --bg: #fff;
+    --panel: #fff;
+    --ink: #000;
+    --line-strong: #000;
+    --manual: #fff;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .sheet {
+    font-size: 9.5px;
+  }
+  .sheet td,
+  .sheet th {
+    height: 16px;
+    padding: 0 4px;
+  }
+  .sheet input {
+    height: 15px;
+    padding: 0 4px;
+  }
+  .sheet td.tool {
+    display: none;
+  }
 }
